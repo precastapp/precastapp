@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 
 export 'app_container.dart';
 export 'global_values.dart';
-export '../local_storage/local_storage.dart';
 export 'locale.dart';
 export 'string_util.dart';
 export 'validadors.dart';

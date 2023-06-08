@@ -2,22 +2,22 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:app_links/app_links.dart';
-import 'package:get/get.dart';
+import 'package:core/core.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
-import 'package:precastapp/entites/user.dart';
-import 'package:precastapp/local_storage/local_storage.dart';
-import 'package:precastapp/pages/welcome_page.dart';
-import 'package:precastapp/services/account_service.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../entites/account.dart';
+import 'account_service.dart';
 
 class Auth0AccountService implements AccountService {
   @override
-  User? current;
+  Account? current;
   oauth2.Client? _client;
   String baseUrl;
   String clientId;
   String returnTo;
+  LocalStorage storage;
 
   oauth2.Client? get client {
     if (_client == null) return null;
@@ -27,17 +27,16 @@ class Auth0AccountService implements AccountService {
     return _client;
   }
 
-  Auth0AccountService({
-    this.baseUrl = 'https://rtabet.us.auth0.com',
-    this.clientId = 'sD3FxjTurJ4C7hvwxdP6bekTQdx2EqDY',
-    this.returnTo = 'precastapp://precastapp.web.app/home',
-  });
+  Auth0AccountService(
+      {this.baseUrl = 'https://rtabet.us.auth0.com',
+      this.clientId = 'sD3FxjTurJ4C7hvwxdP6bekTQdx2EqDY',
+      this.returnTo = 'precastapp://precastapp.web.app/home',
+      required this.storage});
 
   Future<oauth2.Client?> createClient({bool byStorageOnly = false}) async {
     final authorizationEndpoint = Uri.parse('${baseUrl}/authorize');
     final tokenEndpoint = Uri.parse('${baseUrl}/oauth/token');
     final redirectUrl = Uri.parse(returnTo);
-    final storage = Get.find<LocalStorage>();
 
     var user = await storage.read('user');
     if (user != null) {
@@ -65,11 +64,10 @@ class Auth0AccountService implements AccountService {
     // ------- 8< -------
     var result = Completer<oauth2.Client>();
 
-    AppLinks()
-        .allStringLinkStream
-        .where((url) => url.startsWith(redirectUrl))
-        .listen((url) async {
+    AppLinks().allStringLinkStream.listen((url) async {
+      if (!url.startsWith(redirectUrl)) return;
       var uri = Uri.parse(url);
+      if (uri.queryParameters.isEmpty) return;
       var client = await grant.handleAuthorizationResponse(uri.queryParameters);
       result.complete(client);
     });
@@ -77,7 +75,7 @@ class Auth0AccountService implements AccountService {
     return result.future;
   }
 
-  Future<User?> loadUser() async {
+  Future<Account?> loadUser() async {
     _client = await createClient(byStorageOnly: true);
     if (_client == null) return null;
     current = tokenToUser(_client?.credentials.idToken ?? '');
@@ -86,17 +84,18 @@ class Auth0AccountService implements AccountService {
 
   @override
   Future<void> loggout() async {
-    // await launchUrl(
-    //     Uri.parse('$baseUrl/v2/logout?client_id=$clientId&returnTo=$returnTo'),
-    //     mode: LaunchMode.externalApplication);
-    var storage = Get.find<LocalStorage>();
+    await launchUrl(
+        Uri.parse('$baseUrl/v2/logout?client_id=$clientId&returnTo=$returnTo'),
+        mode: LaunchMode.externalApplication);
+    var result = await AppLinks()
+        .allStringLinkStream
+        .firstWhere((url) => url == returnTo);
     await storage.clear();
-    Get.offAllNamed(WelcomePage.routePath);
   }
 
-  User tokenToUser(String token) {
+  Account tokenToUser(String token) {
     var data = JwtDecoder.decode(token);
-    return User(
+    return Account(
         id: data['sub'],
         name: data['name'],
         username: data['nickname'],
@@ -106,22 +105,21 @@ class Auth0AccountService implements AccountService {
   }
 
   @override
-  Future<bool> signIn() async {
+  Future<Account?> signIn() async {
     var client = _client ?? await createClient();
-    if (client == null) return false;
+    if (client == null) return null;
     current = tokenToUser(client.credentials.idToken ?? '');
-    Get.put<User>(current!, permanent: true);
-    return true;
+    return current;
   }
 
   @override
-  Future<bool> signUp(User user, String password) {
+  Future<bool> signUp(Account user, String password) {
     // TODO: implement signUp
     throw UnimplementedError();
   }
 
   @override
-  Future saveUser(User user) async {
+  Future saveUser(Account user) async {
     var resp = await client!.put(Uri.parse('$baseUrl/api/v2/users/${user.id}'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(user.toJson()));

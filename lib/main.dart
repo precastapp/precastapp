@@ -1,8 +1,12 @@
+import 'dart:ui';
+
+import 'package:blog_ui/blog_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:precastapp/login_middlewar.dart';
 import 'package:precastapp/pages/home_page.dart';
 import 'package:precastapp/pages/welcome_page.dart';
+
 import 'configure.dart' if (dart.library.html) 'configure_web.dart';
 
 Future<void> main() async {
@@ -23,27 +27,35 @@ class MyApp extends StatelessWidget {
       useMaterial3: true,
     );
     var darkTheme = ThemeData(
-      colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.orange,
-          brightness: Brightness.dark),
-      useMaterial3: true
-    );
+        colorScheme: ColorScheme.fromSwatch(
+            primarySwatch: Colors.orange, brightness: Brightness.dark),
+        useMaterial3: true);
     return GetMaterialApp(
       title: 'Precast template',
       theme: theme,
       darkTheme: darkTheme,
-      themeMode: ThemeMode.system,
+      themeMode: ThemeMode.light,
       initialRoute: '/home',
       getPages: [
-        GetPage(
-            name: WelcomePage.routePath,
-            page: ()=> WelcomePage()
-        ),
+        GetPage(name: WelcomePage.routePath, page: () => WelcomePage()),
         GetPage(
             name: HomePage.routePath,
-            page: ()=> HomePage(),
-            middlewares: middlewares
-        ),
+            page: () => HomePage(),
+            middlewares: middlewares),
+        GetPage(
+            name: BlogHomePage.routePath,
+            page: () => BlogHomePage(),
+            middlewares: middlewares),
       ],
+      scrollBehavior: MyCustomScrollBehavior(),
     );
   }
+}
+
+class MyCustomScrollBehavior extends MaterialScrollBehavior {
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+        PointerDeviceKind.touch,
+        PointerDeviceKind.mouse,
+      };
 }

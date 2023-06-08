@@ -1,13 +1,13 @@
-import 'entity.dart';
+import 'package:core/core.dart';
 
-class User extends Entity {
+class Account extends Entity {
   String name;
   String username;
   String email;
   String? phone;
   String? image;
 
-  User(
+  Account(
       {String? id,
       required this.name,
       required this.username,

@@ -1,12 +1,12 @@
+import 'package:account/account.dart';
+import 'package:blog_ui/blog_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:precastapp/entites/user.dart';
-import 'package:precastapp/services/account_service.dart';
 import 'package:precastapp/util/global_values.dart';
 
 class HomePage extends StatelessWidget {
   static var routePath = '/home';
-  User user = Get.find();
+  Account user = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +37,10 @@ class HomePage extends StatelessWidget {
           Text(user.name),
           Text(user.email),
           if (user.phone != null) Text(user.phone!),
+          ElevatedButton(
+            onPressed: () => Get.toNamed(BlogHomePage.routePath),
+            child: Text('Blog Home Page'.tr),
+          )
         ],
       ),
     );

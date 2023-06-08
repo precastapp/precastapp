@@ -1,20 +1,22 @@
 import 'dart:ui';
 
+import 'package:account/account.dart';
+import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:precastapp/local_storage/local_storage.dart';
-import 'package:precastapp/services/account_service.dart';
-import 'package:precastapp/services/auth0_account_service.dart';
 
-import 'local_storage/local_storage_shared_preference_impl.dart';
 import 'widgets/snack_messages.dart';
 
 Future<void> configureApp() async {
   await LocalStorageSharedPreferencesImpl.init();
   Get.lazyPut<LocalStorage>(() => LocalStorageSharedPreferencesImpl(),
       fenix: true);
-  Get.lazyPut<AccountService>(() => Auth0AccountService(), fenix: true);
+  Get.lazyPut<AccountService>(() => Auth0AccountService(storage: Get.find()),
+      fenix: true);
   defaultErrorHandler();
+
+  var user = await Get.find<AccountService>().loadUser();
+  if (user != null) Get.put(user, permanent: true);
 }
 
 void defaultErrorHandler() {

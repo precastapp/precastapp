@@ -1,11 +1,10 @@
 import 'dart:convert';
 import 'dart:ui';
 
+import 'package:core/core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-
-import '../local_storage/local_storage.dart';
 
 var localeSelected = Get.deviceLocale!.obs;
 

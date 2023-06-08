@@ -1,13 +1,15 @@
+import 'package:account/account.dart';
+import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:precastapp/pages/home_page.dart';
-import 'package:precastapp/services/account_service.dart';
 
 import '../util/util.dart';
 
 class WelcomePage extends StatelessWidget {
   static var routePath = '/welcome';
   AccountService userManagerService = Get.find();
+  LocalStorage storage = Get.find();
   String? redirectTo;
 
   WelcomePage({this.redirectTo});
@@ -35,7 +37,10 @@ class WelcomePage extends StatelessWidget {
   }
 
   Future<void> sigin() async {
-    var result = await userManagerService.signIn();
-    if (result == true) Get.offAllNamed(redirectTo ?? HomePage.routePath);
+    var user = await userManagerService.signIn();
+    if (user == null) return;
+
+    Get.put(user, permanent: true);
+    Get.offAllNamed(redirectTo ?? HomePage.routePath);
   }
 }
