@@ -1,0 +1,11 @@
+name: precastapp
+
+environment:
+  sdk: '>=3.3.3 <4.0.0'
+  flutter: 3.19.5
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  melos: ^6.2.0

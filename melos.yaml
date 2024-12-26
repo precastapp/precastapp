@@ -1,0 +1,7 @@
+name: PrecastApp
+
+packages:
+  - design_system/
+  - core/
+  - app/
+  - modules/*
