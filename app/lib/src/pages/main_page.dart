@@ -1,20 +1,38 @@
 import 'package:core/core.dart';
-import 'package:home/home.dart';
-import 'package:home/l10n/gen/l10n.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+import '../../l10n/gen/l10n.dart';
+import 'menu_destination.dart';
+
+class MainPage extends StatefulWidget {
+  final List<RouteConfig> subRoutes;
+
+  const MainPage(this.subRoutes, {super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<MainPage> createState() => _MainPageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _MainPageState extends State<MainPage> {
   int menuIndex = 0;
+  late final List<MenuDestination> destinations;
+
+  @override
+  void initState() {
+    super.initState();
+    destinations = widget.subRoutes.map((e) {
+      final firstPage = e.module!.pages.first;
+      return MenuDestination(
+        route: e.route,
+        icon: firstPage.icon!,
+        selectedIcon: firstPage.selectedIcon,
+        title: firstPage.title!,
+      );
+    }).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final title = Text(L10n.of(context).welcome);
+    final title = Text(L10n.of(context).appTitle);
     return AdaptiveScaffold(
       useDrawer: false,
       appBarBreakpoint: Breakpoints.small,
@@ -28,7 +46,7 @@ class _HomePageState extends State<HomePage> {
       selectedIndex: menuIndex,
       body: (c) => const RouterOutlet(),
       destinations: [
-        for (final route in HomeModule.subPages)
+        for (final route in destinations)
           NavigationDestination(
             icon: Icon(route.icon),
             selectedIcon: Icon(route.selectedIcon ?? route.icon),
@@ -42,6 +60,6 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       menuIndex = index;
     });
-    ModuleApp.navigateTo(HomeModule.subPages[index].route);
+    ModuleApp.navigate(destinations[index].route);
   }
 }

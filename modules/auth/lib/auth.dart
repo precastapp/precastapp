@@ -10,7 +10,7 @@ class AuthModule extends Module<AuthModule> {
   List<RouteConfig> get pages => [
         RouteConfig(
           title: (_) => 'Login',
-          route: '/login',
+          route: '/',
           icon: Icons.login,
           builder: () {
             return loadLibrary(

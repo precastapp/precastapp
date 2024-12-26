@@ -32,8 +32,6 @@ dependencies:
     sdk: flutter
   core:
     path: ../core
-  home:
-    path: ../modules/home
   increment_sample:
     path: ../modules/increment_sample
   auth:

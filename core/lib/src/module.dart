@@ -19,7 +19,11 @@ class ModuleApp extends modular.ModularApp {
 
   static Module get rootModule => _instance._rootModule;
 
-  static void navigateTo(String route) {
+  static void pushNavigator(String route) {
+    modular.Modular.to.pushNamed(route);
+  }
+
+  static void navigate(String route) {
     modular.Modular.to.navigate(route);
   }
 

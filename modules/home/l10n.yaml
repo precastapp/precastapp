@@ -1,8 +1,0 @@
-arb-dir: lib/l10n
-template-arb-file: home_pt.arb
-output-localization-file: l10n.dart
-output-dir: lib/l10n/gen
-output-class: L10n
-synthetic-package: false
-nullable-getter: false
-use-deferred-loading: true

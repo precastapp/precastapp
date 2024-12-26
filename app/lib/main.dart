@@ -1,5 +1,4 @@
 import 'package:core/core.dart';
-import 'package:home/l10n/gen/l10n.dart' as home;
 import 'package:increment_sample/l10n/gen/l10n.dart' as increment;
 import 'package:people/l10n/gen/l10n.dart' as people;
 
@@ -15,7 +14,7 @@ class AppWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ModuleApp.setInitialRoute('/home');
+    ModuleApp.setInitialRoute('/increment');
 
     return MaterialApp.router(
       theme: ThemeData.from(
@@ -26,7 +25,6 @@ class AppWidget extends StatelessWidget {
       supportedLocales: L10n.supportedLocales,
       localizationsDelegates: const [
         ...L10n.localizationsDelegates,
-        ...home.L10n.localizationsDelegates,
         ...increment.L10n.localizationsDelegates,
         ...people.L10n.localizationsDelegates,
       ],

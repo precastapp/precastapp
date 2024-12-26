@@ -9,7 +9,7 @@ class IncrementSampleModule extends Module<IncrementSampleModule> {
   List<RouteConfig> get pages => [
         RouteConfig(
           title: (_) => 'Increment',
-          route: '/increment',
+          route: '/',
           icon: Icons.add,
           builder: () => const IncrementSamplePage(),
         ),
